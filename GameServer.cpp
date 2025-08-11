@@ -303,3 +303,15 @@ void GameServer::listRooms() {
                   << " players" << (room->getIsStarted() ? " [IN GAME]" : "") << std::endl;
     }
 }
+void GameServer::CleanUpRooms(){
+
+}
+void GameServer::SendUpdatesToClients(){
+
+}
+void GameServer::HandleGameLogic(){
+
+}
+void GameServer::LogServerStats(){
+
+}

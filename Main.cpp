@@ -2,8 +2,20 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <csignal>
 
+volatile bool server_running = true;
+// Signal handler for graceful shutdown
+void signal_handler(int signal) {
+    std::cout << "\nReceived signal " << signal << ". Shutting down server..." << std::endl;
+    server_running = false;
+}
 int main() {
+    // Set up signal handlers for graceful shutdown
+    signal(SIGINT, signal_handler);
+#ifdef SIGTERM
+    signal(SIGTERM, signal_handler);
+#endif
     GameServer server;
     
     // Create some sample rooms
@@ -33,13 +45,35 @@ int main() {
     // Simulate server running
     std::cout << "\nServer is running... (Press Ctrl+C to stop)" << std::endl;
     
-    // In a real server, you would have a network loop here
-    // For this example, we'll just sleep
-    server.initialize(8080);
-    server.run();
-    while(true) {
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+    // Initialize and start the server
+    if (!server.initialize(8080)) {
+        std::cerr << "Failed to initialize server!" << std::endl;
+        return 1;
+    }
+    std::cout << "\nServer is running on port 8080... (Press Ctrl+C to stop)" << std::endl;
+    
+    std::thread server_thread([&server]() {
+        server.run();
+    });
+    while(server_running) {
+        std::cout << "Server is running...\n";
+        server.CleanUpRooms();
+        server.SendUpdatesToClients();
+        server.LogServerStats();
+        server.HandleGameLogic();
+        static auto last_stats = std::chrono::steady_clock::now();
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - last_stats).count() >= 30) {
+            std::cout << "Server running..." << std::endl;
+            last_stats = now;
+        }
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     
+    // Wait for server thread to finish
+    if (server_thread.joinable()) {
+        server_thread.join();
+    }
     return 0;
 }

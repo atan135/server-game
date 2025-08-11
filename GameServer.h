@@ -58,6 +58,11 @@ public:
     void handle_client_data();
     void broadcast_message(const std::string& message);
 
+    void CleanUpRooms();
+    void SendUpdatesToClients();
+    void HandleGameLogic();
+    void LogServerStats();
+
     #ifdef _WIN32
         ~GameServer();
     #endif
