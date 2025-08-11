@@ -35,6 +35,8 @@ int main() {
     
     // In a real server, you would have a network loop here
     // For this example, we'll just sleep
+    server.initialize(8080);
+    server.run();
     while(true) {
         std::this_thread::sleep_for(std::chrono::seconds(10));
     }
