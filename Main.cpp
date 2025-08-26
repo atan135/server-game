@@ -56,7 +56,6 @@ int main() {
         server.run();
     });
     while(server_running) {
-        std::cout << "Server is running...\n";
         server.CleanUpRooms();
         server.SendUpdatesToClients();
         server.LogServerStats();
