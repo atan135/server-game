@@ -1,5 +1,5 @@
 #include "core/GameServer.h"
-#include <iostream>
+#include "utils/Logger.h"
 #include <thread>
 #include <chrono>
 #include <csignal>
@@ -7,7 +7,7 @@
 volatile bool server_running = true;
 // Signal handler for graceful shutdown
 void signal_handler(int signal) {
-    std::cout << "\nReceived signal " << signal << ". Shutting down server..." << std::endl;
+    LOG_INFO("Received signal " + std::to_string(signal) + ". Shutting down server...");
     server_running = false;
 }
 int main() {
@@ -39,18 +39,18 @@ int main() {
     // Start a game in room1
     room1->startGame();
     
-    std::cout << "\nAfter starting game:" << std::endl;
+    LOG_INFO("After starting game:");
     server.listRooms();
     
     // Simulate server running
-    std::cout << "\nServer is running... (Press Ctrl+C to stop)" << std::endl;
+    LOG_INFO("Server is running... (Press Ctrl+C to stop)");
     
     // Initialize and start the server
     if (!server.initialize(8080)) {
-        std::cerr << "Failed to initialize server!" << std::endl;
+        LOG_ERR("Failed to initialize server!");
         return 1;
     }
-    std::cout << "\nServer is running on port 8080... (Press Ctrl+C to stop)" << std::endl;
+    LOG_INFO("Server is running on port 8080... (Press Ctrl+C to stop)");
     
     std::thread server_thread([&server]() {
         server.run();
@@ -63,7 +63,7 @@ int main() {
         static auto last_stats = std::chrono::steady_clock::now();
         auto now = std::chrono::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::seconds>(now - last_stats).count() >= 30) {
-            std::cout << "Server running..." << std::endl;
+            LOG_INFO("Server running...");
             last_stats = now;
         }
         

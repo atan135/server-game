@@ -12,7 +12,7 @@
 #endif
 
 #include "core/GameServer.h"
-#include <iostream>
+#include "utils/Logger.h"
 #include <cstring>
 
 #ifdef _WIN32
@@ -37,14 +37,14 @@ bool GameServer::initialize(int port) {
     WSADATA wsaData;
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (result != 0) {
-        std::cerr << "WSAStartup failed: " << result << std::endl;
+        LOG_ERR("WSAStartup failed: " + std::to_string(result));
         return false;
     }
     
     // Create server socket
     server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_socket == INVALID_SOCKET) {
-        std::cerr << "Failed to create socket: " << WSAGetLastError() << std::endl;
+        LOG_ERR("Failed to create socket: " + std::to_string(WSAGetLastError()));
         WSACleanup();
         return false;
     }
@@ -52,14 +52,14 @@ bool GameServer::initialize(int port) {
     // Create server socket
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket < 0) {
-        std::cerr << "Failed to create socket" << std::endl;
+        LOG_ERR("Failed to create socket");
         return false;
     }
     
     // Set socket options to reuse address
     int opt = 1;
     if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-        std::cerr << "setsockopt failed" << std::endl;
+        LOG_ERR("setsockopt failed");
         return false;
     }
 #endif
@@ -73,11 +73,11 @@ bool GameServer::initialize(int port) {
     
     if (bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == SOCKET_ERROR) {
 #ifdef _WIN32
-        std::cerr << "Bind failed: " << WSAGetLastError() << std::endl;
+        LOG_ERR("Bind failed: " + std::to_string(WSAGetLastError()));
         closesocket(server_socket);
         WSACleanup();
 #else
-        std::cerr << "Bind failed" << std::endl;
+        LOG_ERR("Bind failed");
 #endif
         return false;
     }
@@ -85,17 +85,17 @@ bool GameServer::initialize(int port) {
     // Listen for connections
     if (listen(server_socket, SOMAXCONN) == SOCKET_ERROR) {
 #ifdef _WIN32
-        std::cerr << "Listen failed: " << WSAGetLastError() << std::endl;
+        LOG_ERR("Listen failed: " + std::to_string(WSAGetLastError()));
         closesocket(server_socket);
         WSACleanup();
 #else
-        std::cerr << "Listen failed" << std::endl;
+        LOG_ERR("Listen failed");
 #endif
         return false;
     }
     
     max_fd = (int)server_socket;
-    std::cout << "Server listening on port " << port << std::endl;
+    LOG_INFO("Server listening on port " + std::to_string(port));
     return true;
 }
 
@@ -128,10 +128,10 @@ void GameServer::run() {
         int activity = select(max_fd + 1, &read_fds, NULL, NULL, NULL);
         if (activity < 0) {
 #ifdef _WIN32
-            std::cerr << "Select error: " << WSAGetLastError() << std::endl;
+            LOG_ERR("Select error: " + std::to_string(WSAGetLastError()));
 #else
             if (errno != EINTR) {
-                std::cerr << "Select error" << std::endl;
+                LOG_ERR("Select error");
             }
 #endif
             break;
@@ -154,9 +154,9 @@ void GameServer::handle_new_connection() {
     auto new_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_len);
     if (new_socket == INVALID_SOCKET) {
 #ifdef _WIN32
-        std::cerr << "Accept failed: " << WSAGetLastError() << std::endl;
+        LOG_ERR("Accept failed: " + std::to_string(WSAGetLastError()));
 #else
-        std::cerr << "Accept failed" << std::endl;
+        LOG_ERR("Accept failed");
 #endif
         return;
     }
@@ -168,8 +168,8 @@ void GameServer::handle_new_connection() {
     inet_ntop(AF_INET, &client_addr.sin_addr, ip_str, INET_ADDRSTRLEN);
 #endif
 
-    std::cout << "New connection from " << ip_str 
-              << ":" << ntohs(client_addr.sin_port) << std::endl;
+    LOG_INFO("New connection from " + std::string(ip_str) + 
+             ":" + std::to_string(ntohs(client_addr.sin_port)));
     
     // Add new socket to list
     client_sockets.push_back(new_socket);
@@ -200,7 +200,7 @@ void GameServer::handle_client_data() {
             
             if (valread == 0) {
                 // Client disconnected
-                std::cout << "Client disconnected" << std::endl;
+                LOG_INFO("Client disconnected");
 #ifdef _WIN32
                 closesocket(client_socket);
 #else
@@ -211,14 +211,14 @@ void GameServer::handle_client_data() {
             } 
 #ifdef _WIN32
             else if (valread == SOCKET_ERROR) {
-                std::cerr << "Recv failed: " << WSAGetLastError() << std::endl;
+                LOG_ERR("Recv failed: " + std::to_string(WSAGetLastError()));
                 closesocket(client_socket);
                 it = client_sockets.erase(it);
                 continue;
             }
 #else
             else if (valread < 0) {
-                std::cerr << "Read failed: " << strerror(errno) << std::endl;
+                LOG_ERR("Read failed: " + std::string(strerror(errno)));
                 close(client_socket);
                 it = client_sockets.erase(it);
                 continue;
@@ -226,7 +226,7 @@ void GameServer::handle_client_data() {
 #endif
             else {
                 // Process data
-                std::cout << "Received: " << buffer << std::endl;
+                LOG_DEBUG("Received: " + std::string(buffer));
                 // Echo back for testing
 #ifdef _WIN32
                 send(client_socket, buffer, valread, 0);
@@ -255,7 +255,7 @@ std::shared_ptr<Room> GameServer::createRoom(const std::string& roomName, int ma
     auto room = std::make_shared<Room>(nextRoomId, roomName, maxPlayers);
     rooms[nextRoomId] = room;
     
-    std::cout << "Created room " << nextRoomId << ": " << roomName << std::endl;
+    LOG_INFO("Created room " + std::to_string(nextRoomId) + ": " + roomName);
     return room;
 }
 
@@ -265,7 +265,7 @@ bool GameServer::deleteRoom(int roomId) {
     auto it = rooms.find(roomId);
     if (it != rooms.end()) {
         rooms.erase(it);
-        std::cout << "Deleted room " << roomId << std::endl;
+        LOG_INFO("Deleted room " + std::to_string(roomId));
         return true;
     }
     return false;
@@ -294,13 +294,14 @@ std::vector<std::shared_ptr<Room>> GameServer::getAllRooms() {
 void GameServer::listRooms() {
     std::lock_guard<std::mutex> lock(roomsMutex);
     
-    std::cout << "=== Room List ===" << std::endl;
+    LOG_INFO("=== Room List ===");
     for (const auto& pair : rooms) {
         auto room = pair.second;
-        std::cout << "Room " << room->getRoomId() 
-                  << " (" << room->getRoomName() << "): "
-                  << room->getPlayerCount() << "/" << room->getMaxPlayers()
-                  << " players" << (room->getIsStarted() ? " [IN GAME]" : "") << std::endl;
+        std::string status = room->getIsStarted() ? " [IN GAME]" : "";
+        LOG_INFO("Room " + std::to_string(room->getRoomId()) + 
+                 " (" + room->getRoomName() + "): " +
+                 std::to_string(room->getPlayerCount()) + "/" + 
+                 std::to_string(room->getMaxPlayers()) + " players" + status);
     }
 }
 void GameServer::CleanUpRooms(){

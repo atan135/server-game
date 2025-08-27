@@ -19,6 +19,10 @@ set(GAME_SOURCES
     ${SOURCE_DIR}/game/Room.cpp
 )
 
+set(UTILS_SOURCES
+    ${SOURCE_DIR}/utils/Logger.cpp
+)
+
 set(MAIN_SOURCES
     ${SOURCE_DIR}/Main.cpp
 )
@@ -27,6 +31,7 @@ set(MAIN_SOURCES
 set(SOURCES
     ${CORE_SOURCES}
     ${GAME_SOURCES}
+    ${UTILS_SOURCES}
     ${MAIN_SOURCES}
 )
 

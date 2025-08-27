@@ -1,5 +1,5 @@
 #include "game/Room.h"
-#include <iostream>
+#include "utils/Logger.h"
 
 Room::Room(int id, const std::string& name, int maxPlayers) 
     : roomId(id), roomName(name), maxPlayers(maxPlayers), isStarted(false) {}
@@ -46,7 +46,7 @@ void Room::startGame() {
     if (players.size() >= 2 && !isStarted) {
         isStarted = true;
         // Game logic would go here
-        std::cout << "Game started in room " << roomId << std::endl;
+        LOG_INFO("Game started in room " + std::to_string(roomId));
     }
 }
 
