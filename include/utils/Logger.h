@@ -26,6 +26,12 @@ public:
     void setConsoleOutput(bool enable);
     void setFileOutput(bool enable);
     
+    // Getter methods
+    std::string getLogFile() const;
+    Level getLogLevel() const;
+    bool getConsoleOutput() const;
+    bool getFileOutput() const;
+    
     // Logging methods
     void debug(const std::string& message);
     void info(const std::string& message);

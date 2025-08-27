@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(GameServer)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # Set source and include directories
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -25,6 +25,10 @@ set(UTILS_SOURCES
 
 set(MAIN_SOURCES
     ${SOURCE_DIR}/Main.cpp
+)
+
+set(TEST_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/LoggerTest.cpp
 )
 
 # Combine all sources
@@ -66,4 +70,13 @@ set_target_properties(GameServer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
+
+# Create test executable
+add_executable(LoggerTest ${TEST_SOURCES} ${UTILS_SOURCES})
+target_link_libraries(LoggerTest Threads::Threads)
+
+# Set test output directory
+set_target_properties(LoggerTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

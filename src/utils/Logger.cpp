@@ -7,7 +7,7 @@
 
 // Static constants
 const std::string Logger::DEFAULT_LOG_FILE = "gameserver.log";
-const Logger::Level Logger::DEFAULT_LEVEL = Logger::Level::INFO;
+const Logger::Level Logger::DEFAULT_LEVEL = Logger::Level::DEBUG;
 
 Logger::Logger() 
     : currentLevel(DEFAULT_LEVEL)
@@ -65,6 +65,23 @@ void Logger::setFileOutput(bool enable) {
     }
     
     fileOutput = enable;
+}
+
+// Getter methods
+std::string Logger::getLogFile() const {
+    return logFilename;
+}
+
+Logger::Level Logger::getLogLevel() const {
+    return currentLevel;
+}
+
+bool Logger::getConsoleOutput() const {
+    return consoleOutput;
+}
+
+bool Logger::getFileOutput() const {
+    return fileOutput;
 }
 
 void Logger::debug(const std::string& message) {

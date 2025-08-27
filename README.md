@@ -15,7 +15,7 @@ A cross-platform multiplayer game server built in C++ with networking capabiliti
 ## Requirements
 
 - **CMake**: Version 3.10 or higher
-- **C++ Compiler**: Supporting C++14 standard
+- **C++ Compiler**: Supporting C++17 standard
   - Windows: Visual Studio 2015+ or MinGW-w64
   - Linux: GCC 5.0+ or Clang 3.4+
 - **System Libraries**:
@@ -133,7 +133,7 @@ The project automatically detects the platform and links appropriate libraries:
 ### Common Issues
 
 1. **Port Already in Use**: Change the port number in Main.cpp (line 58)
-2. **Build Errors**: Ensure CMake version is 3.10+ and compiler supports C++14
+2. **Build Errors**: Ensure CMake version is 3.10+ and compiler supports C++17
 3. **Network Issues**: Check firewall settings and ensure port 8080 is accessible
 
 ### Debug Mode
