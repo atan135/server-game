@@ -11,7 +11,7 @@
     #include <errno.h>
 #endif
 
-#include "GameServer.h"
+#include "core/GameServer.h"
 #include <iostream>
 #include <cstring>
 

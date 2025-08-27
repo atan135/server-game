@@ -1,4 +1,4 @@
-#include "GameServer.h"
+#include "core/GameServer.h"
 #include <iostream>
 #include <thread>
 #include <chrono>

@@ -1,7 +1,7 @@
 #ifndef GAMESERVER_H
 #define GAMESERVER_H
 
-#include "Room.h"
+#include "game/Room.h"
 #include <map>
 #include <memory>
 #include <mutex>

@@ -1,4 +1,4 @@
-#include "Room.h"
+#include "game/Room.h"
 #include <iostream>
 
 Room::Room(int id, const std::string& name, int maxPlayers) 
