@@ -91,14 +91,26 @@ Server running...
 
 ```
 gameserver/
-├── CMakeLists.txt      # Build configuration
-├── Main.cpp            # Main entry point and server initialization
-├── GameServer.h        # Server class header
-├── GameServer.cpp      # Server implementation
-├── Room.h              # Room management header
-├── Room.cpp            # Room implementation
-└── build/              # Build output directory
+├── src/                    # Source code files
+│   ├── core/              # Core server functionality
+│   │   └── GameServer.cpp # Main server implementation
+│   ├── game/              # Game-specific logic
+│   │   └── Room.cpp       # Room management implementation
+│   └── Main.cpp           # Application entry point
+├── include/                # Header files
+│   ├── core/              # Core server headers
+│   │   └── GameServer.h   # Main server class header
+│   └── game/              # Game-specific headers
+│       └── Room.h         # Room management header
+├── build/                  # Build output (generated)
+├── docs/                   # Documentation
+├── examples/               # Example code and usage
+├── tests/                  # Unit tests and test files
+├── CMakeLists.txt          # Build configuration
+└── README.md               # Project overview
 ```
+
+For detailed structure information, see [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md).
 
 ## Development
 

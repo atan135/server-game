@@ -1,46 +1,48 @@
 # Build directories
 build/
-cmake-build-*/
-Makefile
+bin/
+lib/
+out/
+
+# CMake generated files
 CMakeCache.txt
 CMakeFiles/
-*.cmake
 cmake_install.cmake
+Makefile
+*.cmake
 
-# Compiled object files
+# Compiled Object files
+*.slo
+*.lo
 *.o
 *.obj
-*.lo
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
 *.la
+*.a
+*.lib
 
 # Executables
 *.exe
 *.out
 *.app
-*.dll
-*.so
-*.dylib
 
-# Debug and release files
-*.dSYM/
-*.pdb
-*.ilk
-*.sdf
-*.opensdf
-
-# IDE specific files
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# Temporary files
-*.tmp
-*.temp
-
-# Log files
-*.log
 
 # OS generated files
 .DS_Store
@@ -50,3 +52,20 @@ cmake_install.cmake
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test coverage
+*.gcov
+*.gcda
+*.gcno
+
+# Documentation build
+docs/_build/
+docs/html/
+docs/latex/
